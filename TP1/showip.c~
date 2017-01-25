@@ -1,0 +1,41 @@
+/*==================================================================================================================
+Trabalho Prático 1 - Socket, medição de desempenho                     
+Redes de Computadores                               
+Aluno: Guilherme Saulo Alves               
+showip.c: Exibe os endereços IPs ipv4 e ipv6 para um dado nome de hospedeiro. 
+====================================================================================================================*/
+
+#include "showip.h"
+
+//Retorna 4 caso o ip seja ipv4 ou 6 caso o ip seja ipv6
+int especifica_ip(char *argv[]) {
+
+    struct addrinfo aux, *ip, *p;
+    int status;
+	
+    memset(&aux, 0, sizeof aux);
+    aux.ai_family = AF_UNSPEC; // AF_INET ou AF_INET6 - UNSPEC = não especificado 
+    aux.ai_socktype = SOCK_STREAM;  // Stream - TCP
+
+    if ((status = getaddrinfo(argv[1], NULL, &aux, &ip)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
+        return 0;
+    }
+
+    for(p = ip; p != NULL; p = p->ai_next) {
+          
+        if (p->ai_family == AF_INET) { // IPv4 = AF_INET
+            printf("Protocolo IPv4 detectado.\n\n");
+            freeaddrinfo(res); // Libera a lista de endereços struct addrinfo
+            return 4;
+        }
+         
+        else { // É então IPv6 = AF_INET6
+            printf("Protocolo IPv6 detectado.\n\n");
+            freeaddrinfo(res); // Libera a lista de endereços struct addrinfo
+            return 6;
+        }
+    }
+    
+	return 0;
+}
